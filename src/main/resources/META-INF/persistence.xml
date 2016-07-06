@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	version="2.1">
+	<persistence-unit name="biblioteca" transaction-type="RESOURCE_LOCAL">
+
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<non-jta-data-source>jdbc/biblioteca</non-jta-data-source>
+
+		<class>com.ifpb.daca.sidcley.entidades.Emprestimo</class>
+		<class>com.ifpb.daca.sidcley.entidades.Exemplar</class>
+		<class>com.ifpb.daca.sidcley.entidades.Fornecedor</class>
+		<class>com.ifpb.daca.sidcley.entidades.Pessoa</class>
+		<class>com.ifpb.daca.sidcley.entidades.Livro</class>
+
+		<properties>
+			<!-- Configuração Hibernate SGBD PostgreSQL -->
+			<property name="hibernate.default_schema" value="public" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.use_sql_comments" value="true" />
+		</properties>
+	</persistence-unit>
+</persistence>

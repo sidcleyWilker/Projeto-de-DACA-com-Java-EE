@@ -1,0 +1,221 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	xmlns:m="http://primefaces.org/mobile"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="pessoa" value="#{pessoaBean.pessoa}"
+			converter="#{pessoaConverte}" />
+		<f:event listener="#{pessoaBean.preRenderView()}" type="preRenderView" />
+	</f:metadata>
+
+	<ui:define name="content">
+		<h1 class="aw-page-title" style="text-align:center">Gerenciar Clientes</h1>
+
+		<p:commandButton value="Cadastrar Cliente"
+			action="#{pessoaBean.initCadastroNovaPessoa}"
+			oncomplete="PF('dlg3').show();" update="id_dlg_cadastro" />
+
+
+		<p:dialog id="id_dlg_remover" header="Remover Cliente"
+			widgetVar="dlgRemover">
+			<p:panelGrid columns="1">
+				<p:outputLabel value="Você deseja remover" />
+				<p:outputLabel value="#{pessoaBean.pessoa.nome}" />
+			</p:panelGrid>
+
+			<p:commandButton value="Sim" action="#{pessoaBean.remover()}"
+				icon="ui-icon-check" oncomplete="PF('dlgRemover').hide();"
+				update="frmTabela:tb_pessoa" />
+
+			<p:commandButton value="Não" icon="ui-icon-close"
+				onclick="PF('dlgRemover').hide();" />
+		</p:dialog>
+
+		<p:dialog id="id_dlg_cadastro" header="Cadastrar Cliente"
+			widgetVar="dlg3" showEffect="explode" hideEffect="bounce">
+
+			<h:form id="frm_cadastro">
+				<p:messages autoUpdate="true"  id="messagesDialogo" />
+			
+				<p:panelGrid id="grid" columns="2" cellpadding="2">
+					<p:outputLabel value="Login" for="login" />
+					<p:inputText label="Login" id="login" required="true"
+						value="#{pessoaBean.pessoa.login}" />
+
+					<p:outputLabel value="Senha" for="senha" />
+					<p:password label="Senha" id="senha" required="true"
+						value="#{pessoaBean.pessoa.senha}" />
+
+					<p:outputLabel value="Perfil" for="perfil" />
+					<p:selectOneMenu id="perfil" value="#{pessoaBean.pessoa.perfil}"
+						required="true">
+						<f:selectItem itemLabel="Estudante" itemValue="estudante" />
+						<f:selectItem itemLabel="Professor" itemValue="professor" />
+						<f:selectItem itemLabel="Cliente" itemValue="cliente" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Nome" for="nome" />
+					<p:inputText label="Nome" id="nome" required="true"
+						value="#{pessoaBean.pessoa.nome}" />
+
+					<p:outputLabel value="E-mail" for="email" />
+					<p:inputText id="email" value="#{pessoaBean.pessoa.email}" />
+
+					<p:outputLabel value="Telefone" for="telefone" />
+					<p:inputMask id="telefone" value="#{pessoaBean.pessoa.telefone}" mask="(99)9-9999-9999"/>
+
+					<p:outputLabel value="Rua" for="rua" />
+					<p:inputText id="rua" value="#{pessoaBean.pessoa.rua}" />
+
+					<p:outputLabel value="Bairro" for="bairro" />
+					<p:inputText id="bairro" value="#{pessoaBean.pessoa.bairo}" />
+
+					<p:outputLabel value="Numero" for="numero" />
+					<p:inputText id="numero" value="#{pessoaBean.pessoa.numero}" />
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar" action="#{pessoaBean.salvar}"
+					icon=" ui-icon-check" 
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').hide();"
+					update="frmTabela:tb_pessoa" />
+
+				<p:button id="cancelar" outcome="cadastraPessoa" value="Cancelar"
+					icon="ui-icon-cancel" oncomplete="PF('dlg3').hide();" />
+
+			</h:form>
+		</p:dialog>
+
+		<br />
+		<br />
+		<p:separator />
+		<br />
+		<br />
+
+		<div id="listagem">
+			<h:form id="frmTabela">
+					<p:dataTable id="tb_pessoa" var="pessoa"
+						value="#{pessoaBean.pessoas}"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+					{PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+						paginator="true" rows="10" style="margin-bottom:20px"
+						widgetVar="pessoaFind" emptyMessage="Nem um registro encontrado">
+
+						<f:facet name="header">
+							<p:outputPanel style="text-align:left">
+								<h:outputText value="Busca " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('pessoaFind').filter()" style="width:320px"
+									placeholder="digite algum registro" />
+							</p:outputPanel>
+						</f:facet>
+
+
+						<f:facet name="{Exporters}">
+							<h:commandLink>
+								<p:graphicImage value="./resources/algaworks/images/excel.png"
+									width="24" height="24" />
+								<p:dataExporter type="xls" target="tb_pessoa"
+									fileName="pessoasExcel" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="./resources/algaworks/images/pdf.png"
+									width="24" height="24" />
+								<p:dataExporter type="pdf" target="tb_pessoa"
+									fileName="pessoasPdf" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="./resources/algaworks/images/csv.png"
+									width="24" height="24" />
+								<p:dataExporter type="csv" target="tb_pessoa"
+									fileName="pessoasCsv" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="./resources/algaworks/images/xml.png"
+									width="24" height="24" />
+								<p:dataExporter type="xml" target="tb_pessoa"
+									fileName="pessoasXml" />
+							</h:commandLink>
+						</f:facet>
+
+						<p:column filterBy="#{pessoa.login}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Login" />
+							</f:facet>
+							<h:outputText value="#{pessoa.login}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.perfil}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Perfil" />
+							</f:facet>
+							<h:outputText value="#{pessoa.perfil}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.nome}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Nome" />
+							</f:facet>
+							<h:outputText value="#{pessoa.nome}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.email}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="E-mail" />
+							</f:facet>
+							<h:outputText value="#{pessoa.email}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.telefone}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Telefone" />
+							</f:facet>
+							<h:outputText value="#{pessoa.telefone}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.rua}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Rua" />
+							</f:facet>
+							<h:outputText value="#{pessoa.rua}" />
+						</p:column>
+						
+						<p:column>
+							<f:facet name="header" filterBy="#{pessoa.bairo}" filterStyle="display:none">
+								<h:outputText value="Bairro" />
+							</f:facet>
+							<h:outputText value="#{pessoa.bairo}" />
+						</p:column>
+
+						<p:column filterBy="#{pessoa.numero}" filterStyle="display:none">
+							<f:facet name="header">
+								<h:outputText value="Numero" />
+							</f:facet>
+							<h:outputText value="#{pessoa.numero}" />
+						</p:column>
+
+						<p:column headerText="Editar" style="text-align: center;">
+							<p:commandButton value="Editar" icon="ui-icon-pencil"
+								style="text-align: center;"
+								action="#{pessoaBean.setPessoa(pessoa)}"
+								update="frm_cadastro:grid" oncomplete="PF('dlg3').show();" />
+						</p:column>
+
+						<p:column headerText="Deletar" style="text-align: center;">
+							<p:commandButton value="Deletar" icon="ui-icon ui-icon-trash"
+								style="text-align: center;"
+								action="#{pessoaBean.setPessoa(pessoa)}" update="id_dlg_remover"
+								oncomplete="PF('dlgRemover').show();" />
+						</p:column>
+					</p:dataTable>
+			</h:form>
+		</div>
+	</ui:define>
+
+</ui:composition>

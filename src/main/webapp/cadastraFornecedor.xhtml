@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="fornecedor" value="#{fornecedorBean.fornecedor}"
+			converter="#{fornecedorConverte}" />
+		<f:event listener="#{fornecedorBean.preRenderView()}"
+			type="preRenderView" />
+	</f:metadata>
+
+	<ui:define name="content">
+		<h1 class="aw-page-title" style="text-align: center">Gerenciar
+			Fornecedor</h1>
+
+		<p:commandButton value="Cadastrar Fornecedor"
+			action="#{fornecedorBean.initCadastroNovaFornecedor}"
+			oncomplete="PF('dlg3').show();" update="id_dlg_cadastro" />
+
+		<p:dialog id="id_dlg_cadastro" header="Cadastrar Fornecedor"
+			widgetVar="dlg3" showEffect="explode" hideEffect="bounce">
+			<h:form id="frm_cadastro">
+				<p:messages autoUpdate="true" id="messagesDialogo" />
+
+				<p:panelGrid columns="2" id="grid">
+					<p:outputLabel value="CPF - CNPJ" for="cpfCnpj" />
+					<p:inputText id="cpfCnpj"
+						value="#{fornecedorBean.fornecedor.cpfCnpj}" required="true" />
+
+					<p:outputLabel value="Tipo" for="tipo" />
+					<p:selectOneMenu id="tipo"
+						value="#{fornecedorBean.fornecedor.tipo}" required="true">
+						<f:selectItem itemLabel="Doador" itemValue="Doador" />
+						<f:selectItem itemLabel="Empresa" itemValue="Empresa" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Nome" for="nome" />
+					<p:inputText id="nome" value="#{fornecedorBean.fornecedor.nome}" />
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar" action="#{fornecedorBean.salvar}"
+					icon="ui-icon-check" update="frmTabela:tb_fornecedor"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').hide();" />
+
+				<p:button id="cancelar" oncomplete="PF('dlg3').hide();"
+					value="Cancelar" icon="ui-icon-cancel" immediate="true" />
+			</h:form>
+		</p:dialog>
+
+		<br />
+		<br />
+		<p:separator />
+		<br />
+		<br />
+
+
+		<div id="listagem">
+			<h:form id="frmTabela">
+				<p:dataTable id="tb_fornecedor" var="fornecedor"
+					value="#{fornecedorBean.fornecedores}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink}
+					 {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+					paginator="true" rows="10" style="margin-bottom:20px"
+					widgetVar="fornecedorFind"
+					emptyMessage="Nem um registro encontrado">
+
+					<f:facet name="header">
+						<p:outputPanel style="text-align:left">
+							<h:outputText value="Busca " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('fornecedorFind').filter()" style="width:320px"
+								placeholder="digite algum registro" />
+						</p:outputPanel>
+					</f:facet>
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/excel.png"
+								width="24" height="24" />
+							<p:dataExporter type="xls" target="tb_fornecedor"
+								fileName="fornecedoresExcel" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/pdf.png"
+								width="24" height="24" />
+							<p:dataExporter type="pdf" target="tb_fornecedor"
+								fileName="fornecedorPdf" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/csv.png"
+								width="24" height="24" />
+							<p:dataExporter type="csv" target="tb_fornecedor"
+								fileName="fornecedorCsv" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/xml.png"
+								width="24" height="24" />
+							<p:dataExporter type="xml" target="tb_fornecedor"
+								fileName="fornecedorXml" />
+						</h:commandLink>
+					</f:facet>
+
+					<p:column filterBy="#{fornecedor.cpfCnpj}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="CPF / CNPJ" />
+						</f:facet>
+						<h:outputText value="#{fornecedor.cpfCnpj}" />
+					</p:column>
+
+					<p:column filterBy="#{fornecedor.tipo}" filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Tipo" />
+						</f:facet>
+						<h:outputText value="#{fornecedor.tipo}" />
+					</p:column>
+
+					<p:column filterBy="#{fornecedor.nome}" filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Nome" />
+						</f:facet>
+						<h:outputText value="#{fornecedor.nome}" />
+					</p:column>
+
+
+					<p:column headerText="Editar" style="text-align: center;">
+						<p:commandButton value="Editar" icon="ui-icon-pencil"
+							style="text-align: center;"
+							action="#{fornecedorBean.setFornecedor(fornecedor)}"
+							update="frm_cadastro:grid" oncomplete="PF('dlg3').show();" />
+					</p:column>
+
+					<p:column headerText="Deletar" style="text-align: center;">
+						<p:commandButton value="Deletar" icon="ui-icon ui-icon-trash"
+							style="text-align: center;"
+							action="#{fornecedorBean.setFornecedor(fornecedor)}"
+							update="id_dlg_remover" oncomplete="PF('dlgRemover').show();" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</div>
+
+		<p:dialog id="id_dlg_remover" header="Remover Fornecedor"
+			widgetVar="dlgRemover">
+			<p:panelGrid columns="1">
+				<p:outputLabel value="Você deseja remover" />
+				<p:outputLabel value="#{fornecedorBean.fornecedor.nome}" />
+			</p:panelGrid>
+
+			<p:commandButton value="Sim" action="#{fornecedorBean.remover}"
+				icon="ui-icon-check" oncomplete="PF('dlgRemover').hide();"
+				update="frmTabela:tb_fornecedor" />
+
+			<p:commandButton value="Não" icon="ui-icon-close"
+				onclick="PF('dlgRemover').hide();" />
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

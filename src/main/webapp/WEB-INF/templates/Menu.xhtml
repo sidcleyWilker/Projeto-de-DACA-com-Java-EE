@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:m="http://primefaces.org/mobile">
+
+	<nav class="aw-menu" style="padding-top: 8px;">
+		<h:form>
+			<p:growl id="messages" showDetail="true" />
+
+			<p:slideMenu style="width:200px; padding-top: 15px;">
+
+				<p:menuitem value="Home" url="index.xhtml" icon="ui-icon-check" />
+
+				<p:submenu label="Gerenciar" icon="ui-icon-refresh">
+					<p:menuitem value="Gerenciar Pessoa" url="cadastraPessoa.xhtml"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Gerenciar Livro" url="cadastraLivro.xhtml"
+						icon="ui-icon-pencil" />
+					<p:menuitem value="Gerenciar Exemplar" icon="ui-icon-pencil"
+						url="cadastraExemplar.xhtml" />
+					<p:menuitem value="Gerenciar Fornecedor" icon="ui-icon-pencil"
+						url="cadastraFornecedor.xhtml" />
+				</p:submenu>
+
+				<p:submenu label="Eremol" icon="ui-icon-heart">
+					<p:menuitem value="Facebook" icon="icon-facebook-squared" />
+					<p:menuitem value="Twitter" icon="icon-twitter" />
+					<p:menuitem value="Instagram" icon="icon-instagramm" />
+					<p:menuitem value="Google+" icon="icon-gplus" />
+					<p:menuitem value="YouTube" icon="icon-youtube" />
+				</p:submenu>
+
+			</p:slideMenu>
+
+		</h:form>
+	</nav>
+
+</ui:composition>

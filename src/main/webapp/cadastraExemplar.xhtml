@@ -1,0 +1,197 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="exemplar" value="#{exemplarBean.exemplar}"
+			converter="#{exemplarConverte}" />
+		<f:event listener="#{exemplarBean.preRenderView()}"
+			type="preRenderView" />
+	</f:metadata>
+
+	<ui:define name="content">
+		<h1 class="aw-page-title" style="text-align: center">Gerenciar
+			Exemplar</h1>
+
+		<p:commandButton value="Cadastrar Exemplar"
+			action="#{exemplarBean.iniciarNovoCadastroExemplar}"
+			oncomplete="PF('dlg3').show();" update="id_dlg_cadastro" />
+
+		<p:dialog id="id_dlg_cadastro" header="Cadastrar Exemplar"
+			widgetVar="dlg3" showEffect="explode" hideEffect="bounce">
+			<h:form id="frm_cadastro">
+				<p:messages autoUpdate="true" id="messagesDialogo" />
+				
+				<p:panelGrid id="grid" columns="2">
+					<p:outputLabel value="Codigo Item" for="codigoItem" />
+					<p:inputText id="codigoItem"
+						value="#{exemplarBean.exemplar.codigoItem}" required="true" />
+
+					<p:outputLabel value="Observações" for="observações" />
+					<p:inputTextarea id="observações"
+						value="#{exemplarBean.exemplar.observacoes}" autoResize="false" />
+
+					<p:outputLabel value="Data do fornecimento" for="dataFornecimento" />
+					<p:calendar id="dataFornecimento"
+						value="#{exemplarBean.exemplar.dataFornecimento}" />
+
+					<p:outputLabel value="Referente ao Livro" for="RL" />
+					<p:autoComplete required="true" id="RL"
+						value="#{exemplarBean.exemplar.livro}" converter="#{Livro}"
+						completeMethod="#{exemplarBean.sugerirLivro}"
+						forceSelection="true" var="l" itemLabel="#{l.isbn}"
+						itemValue="#{l}" />
+
+					<p:outputLabel value="Fornecido por" for="fornecido" />
+					<p:autoComplete required="true" id="fornecido"
+						value="#{exemplarBean.exemplar.fornecedor}"
+						converter="#{Fornecedor}"
+						completeMethod="#{exemplarBean.sugerirFornecedor}"
+						forceSelection="true" var="f" itemLabel="#{f.cpfCnpj}"
+						itemValue="#{f}" />
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar" action="#{exemplarBean.salvar}"
+					icon="ui-icon-check" update="frmTabela:tb_exemplar"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').hide();" />
+
+				<p:button id="cancelar" oncomplete="PF('dlg3').hide();"
+					value="Cancelar" icon="ui-icon-cancel" immediate="true" />
+			</h:form>
+		</p:dialog>
+
+		<br />
+		<br />
+		<p:separator />
+		<br />
+		<br />
+
+
+		<div id="listagem">
+			<h:form id="frmTabela">
+				<p:dataTable id="tb_exemplar" var="exemplar"
+					value="#{exemplarBean.exemplares}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink}
+					 {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+					paginator="true" rows="10" style="margin-bottom:20px"
+					widgetVar="exemplarFind" emptyMessage="Nem um registro encontrado">
+
+					<f:facet name="header">
+						<p:outputPanel style="text-align:left">
+							<h:outputText value="Busca " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('exemplarFind').filter()" style="width:320px"
+								placeholder="digite algum registro" />
+						</p:outputPanel>
+					</f:facet>
+
+
+					<f:facet name="{Exporters}">
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/excel.png"
+								width="24" height="24" />
+							<p:dataExporter type="xls" target="tb_exemplar"
+								fileName="exemplaresExcel" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/pdf.png"
+								width="24" height="24" />
+							<p:dataExporter type="pdf" target="tb_exemplar"
+								fileName="exemplarPdf" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/csv.png"
+								width="24" height="24" />
+							<p:dataExporter type="csv" target="tb_exemplar"
+								fileName="exemplaresCsv" />
+						</h:commandLink>
+
+						<h:commandLink>
+							<p:graphicImage value="./resources/algaworks/images/xml.png"
+								width="24" height="24" />
+							<p:dataExporter type="xml" target="tb_exemplar"
+								fileName="exemplaresXml" />
+						</h:commandLink>
+					</f:facet>
+
+					<p:column filterBy="#{exemplar.codigoItem}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Codigo Item" />
+						</f:facet>
+						<h:outputText value="#{exemplar.codigoItem}" />
+					</p:column>
+
+					<p:column filterBy="#{exemplar.observacoes}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Observacoes" />
+						</f:facet>
+						<h:outputText value="#{exemplar.observacoes}" />
+					</p:column>
+
+					<p:column filterBy="#{exemplar.dataFornecimento}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Data Do Fornecimento" />
+						</f:facet>
+						<h:outputText value="#{exemplar.dataFornecimento}" />
+					</p:column>
+
+					<p:column filterBy="#{exemplar.disponivel}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Disponivel para Emprestimo" />
+						</f:facet>
+						<h:outputText value="#{exemplar.disponivel}" />
+					</p:column>
+
+					<p:column filterBy="#{exemplar.reservado}"
+						filterStyle="display:none">
+						<f:facet name="header">
+							<h:outputText value="Reservado para Emprestimo" />
+						</f:facet>
+						<h:outputText value="#{exemplar.reservado}" />
+					</p:column>
+
+
+					<p:column headerText="Editar" style="text-align: center;">
+						<p:commandButton value="Editar" icon="ui-icon-pencil"
+							style="text-align: center;"
+							action="#{exemplarBean.setExemplar(exemplar)}"
+							update="frm_cadastro:grid" oncomplete="PF('dlg3').show();" />
+					</p:column>
+
+					<p:column headerText="Deletar" style="text-align: center;">
+						<p:commandButton value="Deletar" icon="ui-icon ui-icon-trash"
+							style="text-align: center;"
+							action="#{exemplarBean.setExemplar(exemplar)}"
+							update="id_dlg_remover" oncomplete="PF('dlgRemover').show();" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</div>
+
+		<p:dialog id="id_dlg_remover" header="Remover Exemplar"
+			widgetVar="dlgRemover">
+			<p:panelGrid columns="1">
+				<p:outputLabel value="Você deseja remover" />
+				<p:outputLabel value="#{exemplarBean.exemplar.codigoItem}" />
+			</p:panelGrid>
+
+			<p:commandButton value="Sim" action="#{exemplarBean.remover}"
+				icon="ui-icon-check" oncomplete="PF('dlgRemover').hide();"
+				update="frmTabela:tb_exemplar" />
+
+			<p:commandButton value="Não" icon="ui-icon-close"
+				onclick="PF('dlgRemover').hide();" />
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
